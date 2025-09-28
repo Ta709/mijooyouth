@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mijoo Peace Church Youth Collection</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    .audio-item {
+      transition: all 0.3s ease;
+    }
+    .audio-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    #hero {
+      background: linear-gradient(135deg, #4f46e5 0%, #1e40af 100%);
+    }
+    .parallax-bg {
+      will-change: transform;
+    }
+    .gallery-item {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .gallery-item:hover {
+      transform: scale(1.02);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    .gallery-item img {
+      transition: all 0.3s ease;
+    }
+    .gallery-item:hover img {
+      filter: brightness(1.1);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .tab-button {
+      transition: all 0.3s ease;
+    }
+    .tab-button.active {
+      background: #2563eb !important;
+      color: white !important;
+    }
+    .tab-button:not(.active) {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    .tab-button:not(.active):hover {
+      background: #e5e7eb;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+    }
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      max-width: 95vw;
+      max-height: 90vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @media (min-width: 768px) {
+      .modal-content {
+        max-width: 85vw;
+        max-height: 85vh;
+      }
+    }
+    .modal-content img {
+      max-width: 90vw;
+      max-height: 80vh;
+      width: auto;
+      height: auto;
+      border-radius: 10px;
+      object-fit: contain;
+    }
+    @media (min-width: 768px) {
+      .modal-content img {
+        max-width: 80vw;
+        max-height: 75vh;
+      }
+    }
+    .modal-content video {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      max-height: 90vh;
+    }
+    .gallery-item video {
+      transition: all 0.3s ease;
+    }
+    .gallery-item:hover video {
+      filter: brightness(1.1);
+    }
+    .close-modal {
+      position: absolute;
+      top: -30px;
+      right: 10px;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    @media (min-width: 768px) {
+      .close-modal {
+        top: -40px;
+        right: 0;
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+  <header id="hero" class="text-white py-8 px-4 md:px-8 relative overflow-hidden min-h-[50vh]">
+    <div class="absolute inset-0 bg-black opacity-40 z-0"></div>
+    <img src="Church_BG.JPG" alt="Mijoo Peace Church Youth" class="absolute inset-0 w-full h-[110%] object-cover z-0 hovered-element parallax-bg" style="object-position: center 35%">
+    <div class="container mx-auto relative z-10 flex flex-col justify-start items-center h-full min-h-[40vh] md:min-h-[50vh] pt-6 md:pt-8 px-4">
+      <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center" data-aos="fade-down">Mijoo Peace Church Youth Collection</h1>
+    </div>
+  </header>
+
+  <!-- Navigation buttons below the image -->
+  <div class="bg-white shadow-md py-4 md:py-6">
+    <div class="container mx-auto px-4">
+      <nav class="flex flex-wrap justify-center gap-2 md:gap-4">
+        <button class="tab-button active px-4 py-2 md:px-6 md:py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition flex items-center shadow-md text-sm md:text-base" data-aos="fade-up" data-aos-delay="100" onclick="showTab('home')">
+          <i data-feather="home" class="mr-2 w-4 h-4"></i> Home
+        </button>
+        <button class="tab-button px-4 py-2 md:px-6 md:py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition flex items-center shadow-md text-sm md:text-base" data-aos="fade-up" data-aos-delay="150" onclick="showTab('praise')">
+          <i data-feather="music" class="mr-2 w-4 h-4"></i> Praise
+        </button>
+        <button class="tab-button px-4 py-2 md:px-6 md:py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition flex items-center shadow-md text-sm md:text-base" data-aos="fade-up" data-aos-delay="200" onclick="showTab('sermons')">
+          <i data-feather="book-open" class="mr-2 w-4 h-4"></i> Sermons
+        </button>
+        <button class="tab-button px-4 py-2 md:px-6 md:py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition flex items-center shadow-md text-sm md:text-base" data-aos="fade-up" data-aos-delay="250" onclick="showTab('gallery')">
+          <i data-feather="camera" class="mr-2 w-4 h-4"></i> Gallery
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <main class="container mx-auto px-4 py-12">
+    <!-- Home Tab Content -->
+    <div id="home-content" class="tab-content active">
+      <section class="mb-16" data-aos="fade-up">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-gray-800 mb-6">Welcome to Mijoo Peace Church Youth</h2>
+          <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            We are a vibrant community of young believers dedicated to growing in faith, fellowship, and service. 
+            Our youth group is a place where hearts are transformed, friendships are forged, and God's love is shared.
+          </p>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div class="bg-white rounded-xl p-6 shadow-md" data-aos="fade-up" data-aos-delay="100">
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+            <i data-feather="heart" class="text-blue-600"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Our Mission</h3>
+          <p class="text-gray-600">
+            To nurture young hearts in Christ, building a foundation of faith, love, and service that will last a lifetime.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-md" data-aos="fade-up" data-aos-delay="200">
+          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+            <i data-feather="users" class="text-green-600"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Community</h3>
+          <p class="text-gray-600">
+            We believe in the power of community. Together we worship, learn, grow, and support one another through life's journey.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-md" data-aos="fade-up" data-aos-delay="300">
+          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+            <i data-feather="star" class="text-purple-600"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Activities</h3>
+          <p class="text-gray-600">
+            From worship nights to community service, retreats to fellowship gatherings - we create meaningful experiences together.
+          </p>
+        </div>
+      </section>
+
+      <section class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 text-center" data-aos="fade-up">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Join Our Journey</h3>
+        <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+          Whether you're new to faith or have been walking with Christ for years, there's a place for you in our youth community. 
+          Come as you are, and let's grow together in God's love.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <button onclick="showTab('praise')" class="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition flex items-center justify-center">
+            <i data-feather="music" class="mr-2 w-4 h-4"></i> Listen to Our Praise
+          </button>
+          <button onclick="showTab('sermons')" class="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition flex items-center justify-center">
+            <i data-feather="book-open" class="mr-2 w-4 h-4"></i> Youth Sermons
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Praise Tab Content -->
+    <div id="praise-content" class="tab-content">
+      <section id="praise" class="mb-20">
+        <div class="flex flex-col sm:flex-row items-center mb-8" data-aos="fade-right">
+          <button onclick="showTab('home')" class="flex items-center text-blue-600 hover:text-blue-800 transition mb-4 sm:mb-0 sm:mr-6">
+            <i data-feather="arrow-left" class="mr-2"></i> Back to Home
+          </button>
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+              <i data-feather="music" class="text-blue-600"></i>
+            </div>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800">Praise & Worship</h2>
+          </div>
+        </div>
+        <div id="praise-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+      </section>
+    </div>
+
+    <!-- Sermons Tab Content -->
+    <div id="sermons-content" class="tab-content">
+      <section id="sermons" class="mb-20">
+        <div class="flex flex-col sm:flex-row items-center mb-8" data-aos="fade-right">
+          <button onclick="showTab('home')" class="flex items-center text-blue-600 hover:text-blue-800 transition mb-4 sm:mb-0 sm:mr-6">
+            <i data-feather="arrow-left" class="mr-2"></i> Back to Home
+          </button>
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+              <i data-feather="book-open" class="text-purple-600"></i>
+            </div>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800">Youth Sermons</h2>
+          </div>
+        </div>
+        <div id="sermon-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+      </section>
+    </div>
+
+    <!-- Gallery Tab Content -->
+    <div id="gallery-content" class="tab-content">
+      <section id="gallery" class="mb-20">
+        <div class="flex flex-col sm:flex-row items-center mb-8" data-aos="fade-right">
+          <button onclick="showTab('home')" class="flex items-center text-blue-600 hover:text-blue-800 transition mb-4 sm:mb-0 sm:mr-6">
+            <i data-feather="arrow-left" class="mr-2"></i> Back to Home
+          </button>
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+              <i data-feather="camera" class="text-green-600"></i>
+            </div>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800">Gallery</h2>
+          </div>
+        </div>
+        <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Gallery items will be loaded here -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="bg-gray-100 py-8">
+    <div class="container mx-auto px-4 text-center text-gray-600">
+      <p>© 2023 Mijoo Peace Church Youth. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Image Modal -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <img id="modalImage" src="" alt="">
+    </div>
+  </div>
+
+  <script>
+    const mediaCategories = {
+      praise: 'audio/praise',
+      sermons: 'audio/sermons',
+      gallery: 'images'
+    };
+
+    function loadMedia(category, elementId) {
+      fetch(`${mediaCategories[category]}/index.json`)
+        .then(r => r.json())
+        .then(list => {
+          const container = document.getElementById(elementId);
+          list.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'audio-item bg-white rounded-xl p-6 shadow-md';
+            div.innerHTML = `
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">${item.title}</h3>
+              <div class="mb-3">
+                ${item.type.startsWith('video') ?
+                  `<video controls class="w-full rounded-lg" src="${mediaCategories[category]}/${item.file}"></video>` :
+                  `<audio controls class="w-full" src="${mediaCategories[category]}/${item.file}"></audio>`}
+              </div>
+              <p class="text-sm text-gray-500">${item.date}</p>
+            `;
+            container.appendChild(div);
+          });
+        })
+        .catch(e => console.error('Failed to load ' + category, e));
+    }
+
+    async function loadGallery() {
+      const galleryContainer = document.getElementById('gallery-grid');
+      galleryContainer.innerHTML = ''; // Clear existing content
+
+      // Try to load from JSON first (if it exists), otherwise auto-detect media
+      try {
+        // Add cache busting parameter to ensure fresh JSON load
+        const response = await fetch('images/index.json?t=' + Date.now());
+        if (response.ok) {
+          const galleryItems = await response.json();
+          
+          galleryItems.forEach((item, index) => {
+            const mediaType = getMediaType(item.src);
+            createGalleryItem(item.src, item.alt || getImageNameFromPath(item.src), item.caption || '', mediaType);
+          });
+          return; // Exit if JSON loading was successful
+        }
+      } catch (error) {
+        console.log('No index.json found, attempting auto-detection...');
+      }
+
+      // Auto-detect media files in the images folder
+      await autoDetectMedia();
+    }
+
+    function getMediaType(filePath) {
+      const extension = filePath.toLowerCase().split('.').pop();
+      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'];
+      const videoExtensions = ['mp4', 'mov', 'webm', 'avi', 'mkv'];
+      
+      if (imageExtensions.includes(extension)) {
+        return 'image';
+      } else if (videoExtensions.includes(extension)) {
+        return 'video';
+      }
+      return 'unknown';
+    }
+
+    function getImageNameFromPath(imagePath) {
+      // Extract filename without extension and format it nicely
+      const filename = imagePath.split('/').pop();
+      const nameWithoutExt = filename.split('.')[0];
+      
+      // Replace underscores and hyphens with spaces, capitalize first letter of each word
+      return nameWithoutExt
+        .replace(/[_-]/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    async function autoDetectMedia() {
+      // Common media file names with various extensions
+      const commonFileNames = [
+        'Church_BG.JPG', 'Church_BG.jpg', 'Church_BG.png',
+        // iPhone-style JPG files (converted from HEIC)
+        'IMG_1362.jpg', 'IMG_1961.jpg', 'IMG_1234.jpg', 'IMG_5678.jpg',
+        'IMG_0001.jpg', 'IMG_0002.jpg', 'IMG_0003.jpg', 'IMG_0004.jpg',
+        'IMG_0005.jpg', 'IMG_0006.jpg', 'IMG_0007.jpg', 'IMG_0008.jpg',
+        'IMG_0009.jpg', 'IMG_0010.jpg', 'IMG_0011.jpg', 'IMG_0012.jpg',
+        // Images
+        'gallery1.jpg', 'gallery2.jpg', 'gallery3.jpg', 'gallery4.jpg', 'gallery5.jpg', 'gallery6.jpg',
+        'gallery1.png', 'gallery2.png', 'gallery3.png', 'gallery4.png', 'gallery5.png', 'gallery6.png',
+        'photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg', 'photo5.jpg', 'photo6.jpg',
+        'image1.jpg', 'image2.jpg', 'image3.jpg', 'image4.jpg', 'image5.jpg', 'image6.jpg',
+        'youth1.jpg', 'youth2.jpg', 'youth3.jpg', 'youth4.jpg', 'youth5.jpg', 'youth6.jpg',
+        '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg',
+        // Videos
+        'video1.mp4', 'video2.mp4', 'video3.mp4', 'video4.mp4', 'video5.mp4', 'video6.mp4',
+        'video1.mov', 'video2.mov', 'video3.mov', 'video4.mov', 'video5.mov', 'video6.mov',
+        'gallery1.mp4', 'gallery2.mp4', 'gallery3.mp4', 'gallery4.mp4', 'gallery5.mp4', 'gallery6.mp4',
+        'gallery1.mov', 'gallery2.mov', 'gallery3.mov', 'gallery4.mov', 'gallery5.mov', 'gallery6.mov',
+        '1.mp4', '2.mp4', '3.mp4', '4.mp4', '5.mp4', '6.mp4', '7.mp4', '8.mp4', '9.mp4', '10.mp4',
+        '1.mov', '2.mov', '3.mov', '4.mov', '5.mov', '6.mov', '7.mov', '8.mov', '9.mov', '10.mov'
+      ];
+
+      const galleryContainer = document.getElementById('gallery-grid');
+      let foundMedia = 0;
+
+      // Check each potential media file
+      for (const fileName of commonFileNames) {
+        const filePath = `images/${fileName}`;
+        const mediaType = getMediaType(filePath);
+        
+        if (mediaType === 'image') {
+          // Test images by creating an Image object
+          const testImg = new Image();
+          testImg.onload = () => {
+            foundMedia++;
+            createGalleryItem(filePath, getImageNameFromPath(filePath), '', mediaType);
+          };
+          testImg.onerror = () => {
+            // Image doesn't exist, do nothing
+          };
+          testImg.src = filePath;
+        } else if (mediaType === 'video') {
+          // Test videos by trying to fetch them
+          try {
+            const response = await fetch(filePath, { method: 'HEAD' });
+            if (response.ok) {
+              foundMedia++;
+              createGalleryItem(filePath, getImageNameFromPath(filePath), '', mediaType);
+            }
+          } catch (error) {
+            // Video doesn't exist, do nothing
+          }
+        }
+      }
+
+      // If no media found after a short delay, show placeholder message
+      setTimeout(() => {
+        if (foundMedia === 0) {
+          galleryContainer.innerHTML = `
+            <div class="col-span-full text-center py-12">
+              <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-feather="image" class="text-gray-400 w-12 h-12"></i>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-700 mb-2">No Media Found</h3>
+              <p class="text-gray-500 mb-4">Upload images or videos to the 'images/' folder to see them here.</p>
+              <div class="text-sm text-gray-400">
+                <p><strong>Images:</strong> JPG, PNG, GIF, WebP</p>
+                <p><strong>Videos:</strong> MP4, MOV, WebM</p>
+                <p>Try naming your files: gallery1.jpg, video1.mp4, etc.</p>
+              </div>
+            </div>
+          `;
+          feather.replace(); // Re-initialize feather icons
+        }
+      }, 3000); // Increased timeout for video loading
+    }
+
+    function createGalleryItem(mediaSrc, mediaTitle, mediaCaption, mediaType = 'image') {
+      const galleryContainer = document.getElementById('gallery-grid');
+      const div = document.createElement('div');
+      div.className = 'gallery-item bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer';
+      
+      let mediaElement = '';
+      
+      if (mediaType === 'video') {
+        // For videos, show video element with poster and play icon overlay
+        mediaElement = `
+          <div class="relative">
+            <video class="w-full h-64 object-cover" preload="metadata" muted>
+              <source src="${mediaSrc}" type="video/${mediaSrc.split('.').pop()}">
+              Your browser does not support the video tag.
+            </video>
+            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+              <div class="w-16 h-16 bg-white bg-opacity-80 rounded-full flex items-center justify-center">
+                <i data-feather="play" class="text-gray-800 w-8 h-8 ml-1"></i>
+              </div>
+            </div>
+          </div>
+        `;
+        div.onclick = () => openVideoModal(mediaSrc, mediaTitle);
+      } else {
+        // For images
+        mediaElement = `
+          <img src="${mediaSrc}" alt="${mediaTitle}" class="w-full h-64 object-cover" 
+               onerror="this.parentElement.style.display='none';">
+        `;
+        div.onclick = () => openModal(mediaSrc, mediaTitle);
+      }
+      
+      div.innerHTML = `
+        ${mediaElement}
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-gray-800 mb-1">${mediaTitle}</h3>
+          ${mediaCaption ? `<p class="text-sm text-gray-500">${mediaCaption}</p>` : ''}
+          ${mediaType === 'video' ? '<p class="text-xs text-blue-500 mt-1">📹 Video</p>' : ''}
+        </div>
+      `;
+      galleryContainer.appendChild(div);
+      
+      // Re-initialize feather icons for the play button
+      if (mediaType === 'video') {
+        feather.replace();
+      }
+    }
+
+    // Tab switching functionality
+    function showTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // Remove active class from all buttons
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+      });
+      
+      // Show selected tab content
+      document.getElementById(tabName + '-content').classList.add('active');
+      
+      // Find and activate the correct button
+      const clickedButton = Array.from(document.querySelectorAll('.tab-button')).find(button => 
+        button.textContent.toLowerCase().includes(tabName) || 
+        (tabName === 'home' && button.textContent.toLowerCase().includes('home')) ||
+        (tabName === 'praise' && button.textContent.toLowerCase().includes('praise')) ||
+        (tabName === 'sermons' && button.textContent.toLowerCase().includes('sermons')) ||
+        (tabName === 'gallery' && button.textContent.toLowerCase().includes('gallery'))
+      );
+      if (clickedButton) {
+        clickedButton.classList.add('active');
+      }
+    }
+
+    // Modal functionality
+    function openModal(imageSrc, imageTitle) {
+      const modal = document.getElementById('imageModal');
+      const modalImage = document.getElementById('modalImage');
+      modalImage.src = imageSrc;
+      modalImage.alt = imageTitle;
+      modalImage.style.display = 'block';
+      
+      // Hide video element if it exists
+      const modalVideo = document.getElementById('modalVideo');
+      if (modalVideo) {
+        modalVideo.style.display = 'none';
+        modalVideo.pause();
+      }
+      
+      modal.classList.add('active');
+    }
+
+    function openVideoModal(videoSrc, videoTitle) {
+      const modal = document.getElementById('imageModal');
+      const modalImage = document.getElementById('modalImage');
+      let modalVideo = document.getElementById('modalVideo');
+      
+      // Hide image
+      modalImage.style.display = 'none';
+      
+      // Create video element if it doesn't exist
+      if (!modalVideo) {
+        modalVideo = document.createElement('video');
+        modalVideo.id = 'modalVideo';
+        modalVideo.controls = true;
+        modalVideo.className = 'w-full h-auto border-radius-10px max-h-[90vh]';
+        modalVideo.style.borderRadius = '10px';
+        document.querySelector('.modal-content').appendChild(modalVideo);
+      }
+      
+      // Show and setup video
+      modalVideo.style.display = 'block';
+      modalVideo.src = videoSrc;
+      modalVideo.load(); // Reload video source
+      
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('imageModal');
+      const modalVideo = document.getElementById('modalVideo');
+      
+      // Pause video if playing
+      if (modalVideo) {
+        modalVideo.pause();
+        modalVideo.currentTime = 0;
+      }
+      
+      modal.classList.remove('active');
+    }
+
+    // Parallax scrolling effect
+    function handleParallax() {
+      const scrolled = window.pageYOffset;
+      const parallaxElement = document.querySelector('.parallax-bg');
+      if (parallaxElement) {
+        const speed = 0.2; // Speed of parallax effect
+        // Show top 75% of image and scroll through it
+        const initialOffset = 0; // Start from natural top position
+        parallaxElement.style.transform = `translateY(${scrolled * speed}px)`;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      AOS.init({
+        duration: 800,
+        easing: 'ease-in-out'
+      });
+      feather.replace();
+      loadMedia('praise', 'praise-list');
+      loadMedia('sermons', 'sermon-list');
+      loadGallery();
+      
+      // Add parallax scroll listener
+      window.addEventListener('scroll', handleParallax);
+      
+      // Close modal when clicking outside the image
+      document.getElementById('imageModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeModal();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
