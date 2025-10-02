@@ -128,6 +128,32 @@
         font-size: 30px;
       }
     }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .sticky {
+      position: -webkit-sticky;
+      position: sticky;
+    }
+    #upcoming-events .border:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+    }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -152,7 +178,10 @@
         <button class="tab-button px-4 py-2 md:px-6 md:py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition flex items-center shadow-md text-sm md:text-base" data-aos="fade-up" data-aos-delay="200" onclick="showTab('sermons')">
           <i data-feather="book-open" class="mr-2 w-4 h-4"></i> Sermons
         </button>
-        <button class="tab-button px-4 py-2 md:px-6 md:py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition flex items-center shadow-md text-sm md:text-base" data-aos="fade-up" data-aos-delay="250" onclick="showTab('gallery')">
+        <button class="tab-button px-4 py-2 md:px-6 md:py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition flex items-center shadow-md text-sm md:text-base" data-aos="fade-up" data-aos-delay="250" onclick="showTab('events')">
+          <i data-feather="calendar" class="mr-2 w-4 h-4"></i> Events
+        </button>
+        <button class="tab-button px-4 py-2 md:px-6 md:py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition flex items-center shadow-md text-sm md:text-base" data-aos="fade-up" data-aos-delay="300" onclick="showTab('gallery')">
           <i data-feather="camera" class="mr-2 w-4 h-4"></i> Gallery
         </button>
       </nav>
@@ -254,6 +283,67 @@
           </div>
         </div>
         <div id="sermon-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+      </section>
+    </div>
+
+    <!-- Events Tab Content -->
+    <div id="events-content" class="tab-content">
+      <section id="events" class="mb-20">
+        <div class="flex flex-col sm:flex-row items-center mb-8" data-aos="fade-right">
+          <button onclick="showTab('home')" class="flex items-center text-blue-600 hover:text-blue-800 transition mb-4 sm:mb-0 sm:mr-6">
+            <i data-feather="arrow-left" class="mr-2"></i> Back to Home
+          </button>
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+              <i data-feather="calendar" class="text-yellow-600"></i>
+            </div>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800">Events</h2>
+          </div>
+        </div>
+        
+        <!-- Events Layout with Calendar and Sidebar -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <!-- Main Calendar Area -->
+          <div class="lg:col-span-3">
+            <!-- Embedded Google Calendar -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <div class="flex items-center mb-4">
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                  <i data-feather="calendar" class="text-blue-600 w-4 h-4"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800">Church Calendar</h3>
+              </div>
+              <div class="rounded-lg overflow-hidden" style="height: 600px;">
+                <iframe 
+                  src="https://calendar.google.com/calendar/embed?src=779f691fd7cf0c78fc6f33f530b4aebeefa1d09ada5951bb7e01afb5ffcb6901%40group.calendar.google.com&ctz=America%2FLos_Angeles" 
+                  style="border: 0; width: 100%; height: 100%;" 
+                  frameborder="0" 
+                  scrolling="no">
+                </iframe>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Upcoming Events Sidebar -->
+          <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-md p-6 sticky top-6">
+              <div class="flex items-center mb-4">
+                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                  <i data-feather="clock" class="text-green-600 w-4 h-4"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Upcoming Events</h3>
+              </div>
+              <div id="upcoming-events" class="space-y-3">
+                <!-- Events will be loaded automatically from Google Calendar -->
+                <div class="text-center py-6 text-gray-400">
+                  <i data-feather="calendar" class="w-8 h-8 mx-auto mb-2"></i>
+                  <p class="text-sm">Click Events tab to load</p>
+                  <p class="text-xs mt-1">upcoming events</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
 
@@ -520,6 +610,7 @@
         (tabName === 'home' && button.textContent.toLowerCase().includes('home')) ||
         (tabName === 'praise' && button.textContent.toLowerCase().includes('praise')) ||
         (tabName === 'sermons' && button.textContent.toLowerCase().includes('sermons')) ||
+        (tabName === 'events' && button.textContent.toLowerCase().includes('events')) ||
         (tabName === 'gallery' && button.textContent.toLowerCase().includes('gallery'))
       );
       if (clickedButton) {
@@ -596,6 +687,184 @@
       }
     }
 
+    // Google Calendar Integration using iCal format (no API key needed!)
+    let isCalendarLoaded = false;
+    
+    // Configuration for Google Calendar iCal
+    const CALENDAR_CONFIG = {
+      ICAL_URL: 'https://calendar.google.com/calendar/ical/779f691fd7cf0c78fc6f33f530b4aebeefa1d09ada5951bb7e01afb5ffcb6901%40group.calendar.google.com/public/basic.ics',
+      PROXY_URL: 'https://corsproxy.io/?', // CORS proxy to fetch iCal data
+    };
+
+    async function loadCalendarFromIcal() {
+      if (isCalendarLoaded) return;
+      
+      try {
+        console.log('Loading calendar from iCal format...');
+        showSidebarLoading();
+        
+        // Fetch the iCal data through a CORS proxy
+        const response = await fetch(CALENDAR_CONFIG.PROXY_URL + encodeURIComponent(CALENDAR_CONFIG.ICAL_URL));
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch calendar: ${response.status}`);
+        }
+        
+        const icalData = await response.text();
+        console.log('iCal data loaded successfully');
+        
+        const events = parseIcalData(icalData);
+        const upcomingEvents = getUpcomingEvents(events, 5);
+        
+        displayUpcomingEvents(upcomingEvents);
+        isCalendarLoaded = true;
+        
+      } catch (error) {
+        console.error('Failed to load calendar from iCal:', error);
+        showSidebarError();
+      }
+    }
+
+    function parseIcalData(icalData) {
+      const events = [];
+      const lines = icalData.split('\n');
+      let currentEvent = null;
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        if (line === 'BEGIN:VEVENT') {
+          currentEvent = {};
+        } else if (line === 'END:VEVENT' && currentEvent) {
+          if (currentEvent.summary && currentEvent.dtstart) {
+            events.push(currentEvent);
+          }
+          currentEvent = null;
+        } else if (currentEvent && line.includes(':')) {
+          const [key, ...valueParts] = line.split(':');
+          const value = valueParts.join(':');
+          
+          if (key.startsWith('DTSTART')) {
+            currentEvent.dtstart = parseIcalDate(value);
+            currentEvent.isAllDay = !line.includes('T'); // No time = all day event
+          } else if (key.startsWith('DTEND')) {
+            currentEvent.dtend = parseIcalDate(value);
+          } else if (key === 'SUMMARY') {
+            currentEvent.summary = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\\\/g, '\\');
+          } else if (key === 'DESCRIPTION') {
+            currentEvent.description = value.replace(/\\n/g, '\n').replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\\\/g, '\\');
+          } else if (key === 'LOCATION') {
+            currentEvent.location = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\\\/g, '\\');
+          }
+        }
+      }
+      
+      return events;
+    }
+
+    function parseIcalDate(dateString) {
+      // Handle different iCal date formats
+      if (dateString.includes('T')) {
+        // DateTime format: 20251006T100000Z or 20251006T100000
+        const cleanDate = dateString.replace(/[TZ]/g, '');
+        const year = cleanDate.substring(0, 4);
+        const month = cleanDate.substring(4, 6);
+        const day = cleanDate.substring(6, 8);
+        const hour = cleanDate.substring(8, 10) || '00';
+        const minute = cleanDate.substring(10, 12) || '00';
+        
+        return new Date(`${year}-${month}-${day}T${hour}:${minute}:00`);
+      } else {
+        // Date only format: 20251006
+        const year = dateString.substring(0, 4);
+        const month = dateString.substring(4, 6);
+        const day = dateString.substring(6, 8);
+        
+        return new Date(`${year}-${month}-${day}`);
+      }
+    }
+
+    function getUpcomingEvents(events, maxEvents = 5) {
+      const now = new Date();
+      
+      return events
+        .filter(event => event.dtstart >= now) // Only future events
+        .sort((a, b) => a.dtstart - b.dtstart) // Sort by date
+        .slice(0, maxEvents); // Take first N events
+    }
+
+    function displayUpcomingEvents(events) {
+      const upcomingContainer = document.getElementById('upcoming-events');
+      
+      if (!events || events.length === 0) {
+        upcomingContainer.innerHTML = `
+          <div class="text-center py-6 text-gray-400">
+            <i data-feather="calendar-x" class="w-8 h-8 mx-auto mb-2"></i>
+            <p class="text-sm">No upcoming events</p>
+            <p class="text-xs mt-1">Check your calendar</p>
+          </div>
+        `;
+        feather.replace();
+        return;
+      }
+      
+      upcomingContainer.innerHTML = events.map(event => {
+        const eventDate = event.dtstart;
+        const isAllDay = event.isAllDay;
+        
+        // Format date
+        const dateStr = eventDate.toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric',
+          year: eventDate.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+        });
+        
+        // Format time
+        let timeStr = '';
+        if (isAllDay) {
+          timeStr = '<div class="text-xs text-green-600">All Day</div>';
+        } else {
+          const time = eventDate.toLocaleTimeString('en-US', { 
+            hour: 'numeric', 
+            minute: '2-digit' 
+          });
+          timeStr = `<div class="text-xs text-blue-600">${time}</div>`;
+        }
+        
+        return `
+          <div class="border border-gray-200 rounded-lg p-3 hover:border-blue-300 transition">
+            <h5 class="font-medium text-gray-800 text-sm mb-1 line-clamp-2">${event.summary || 'Untitled Event'}</h5>
+            <div class="text-xs text-gray-600 mb-1">${dateStr}</div>
+            ${timeStr}
+          </div>
+        `;
+      }).join('');
+      
+      feather.replace();
+    }
+
+    function showSidebarLoading() {
+      const upcomingContainer = document.getElementById('upcoming-events');
+      upcomingContainer.innerHTML = `
+        <div class="text-center py-6 text-gray-400">
+          <div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+          <p class="text-sm">Loading events...</p>
+        </div>
+      `;
+    }
+
+    function showSidebarError() {
+      const upcomingContainer = document.getElementById('upcoming-events');
+      upcomingContainer.innerHTML = `
+        <div class="text-center py-6 text-gray-400">
+          <i data-feather="alert-circle" class="w-6 h-6 mx-auto mb-2 text-red-400"></i>
+          <p class="text-sm">Failed to load events</p>
+          <button onclick="isCalendarLoaded = false; loadCalendarFromIcal();" class="text-xs text-blue-500 mt-1 hover:underline">Retry</button>
+        </div>
+      `;
+      feather.replace();
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       AOS.init({
         duration: 800,
@@ -605,6 +874,19 @@
       loadMedia('praise', 'praise-list');
       loadMedia('sermons', 'sermon-list');
       loadGallery();
+      // Load Google Calendar from iCal when events tab is accessed
+      const originalShowTab = window.showTab || showTab;
+      window.showTab = function(tabName) {
+        if (typeof originalShowTab === 'function') {
+          originalShowTab(tabName);
+        } else {
+          showTab(tabName);
+        }
+        
+        if (tabName === 'events' && !isCalendarLoaded) {
+          loadCalendarFromIcal();
+        }
+      };
       
       // Add parallax scroll listener
       window.addEventListener('scroll', handleParallax);
