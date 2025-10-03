@@ -786,36 +786,54 @@
     // Configuration for Google Calendar iCal
     const CALENDAR_CONFIG = {
       ICAL_URL: 'https://calendar.google.com/calendar/ical/779f691fd7cf0c78fc6f33f530b4aebeefa1d09ada5951bb7e01afb5ffcb6901%40group.calendar.google.com/public/basic.ics',
-      PROXY_URL: 'https://corsproxy.io/?', // CORS proxy to fetch iCal data
+      PROXY_URLS: [
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?',
+        'https://cors-anywhere.herokuapp.com/'
+      ]
     };
 
     async function loadCalendarFromIcal() {
       if (isCalendarLoaded) return;
       
-      try {
-        console.log('Loading calendar from iCal format...');
-        showSidebarLoading();
-        
-        // Fetch the iCal data through a CORS proxy
-        const response = await fetch(CALENDAR_CONFIG.PROXY_URL + encodeURIComponent(CALENDAR_CONFIG.ICAL_URL));
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch calendar: ${response.status}`);
+      console.log('Loading calendar from iCal format...');
+      showSidebarLoading();
+      
+      // Try multiple proxy services
+      for (const proxyUrl of CALENDAR_CONFIG.PROXY_URLS) {
+        try {
+          console.log(`Trying proxy: ${proxyUrl}`);
+          
+          const response = await fetch(proxyUrl + encodeURIComponent(CALENDAR_CONFIG.ICAL_URL), {
+            timeout: 10000 // 10 second timeout
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          
+          const icalData = await response.text();
+          
+          if (icalData && icalData.includes('BEGIN:VCALENDAR')) {
+            console.log('iCal data loaded successfully');
+            const events = parseIcalData(icalData);
+            const upcomingEvents = getUpcomingEvents(events, 5);
+            
+            if (upcomingEvents.length > 0) {
+              displayUpcomingEvents(upcomingEvents);
+              isCalendarLoaded = true;
+              return; // Success!
+            }
+          }
+        } catch (error) {
+          console.log(`Proxy ${proxyUrl} failed:`, error.message);
+          continue; // Try next proxy
         }
-        
-        const icalData = await response.text();
-        console.log('iCal data loaded successfully');
-        
-        const events = parseIcalData(icalData);
-        const upcomingEvents = getUpcomingEvents(events, 5);
-        
-        displayUpcomingEvents(upcomingEvents);
-        isCalendarLoaded = true;
-        
-      } catch (error) {
-        console.error('Failed to load calendar from iCal:', error);
-        showSidebarError();
       }
+      
+      // All proxies failed, show error
+      console.log('All proxies failed, showing error');
+      showSidebarError();
     }
 
     function parseIcalData(icalData) {
@@ -946,6 +964,8 @@
       `;
     }
 
+
+
     function showSidebarError() {
       const upcomingContainer = document.getElementById('upcoming-events');
       upcomingContainer.innerHTML = `
@@ -1014,6 +1034,9 @@
       loadMedia('praise', 'praise-list');
       loadMedia('sermons', 'sermon-list');
       loadGallery();
+      // Load upcoming events immediately for sidebar
+      loadCalendarFromIcal();
+      
       // Load content when tabs are accessed
       const originalShowTab = window.showTab || showTab;
       window.showTab = function(tabName) {
